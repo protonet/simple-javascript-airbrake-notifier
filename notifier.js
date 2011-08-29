@@ -1,5 +1,5 @@
-(function($, window, location) {
-  var oldOnError    = window.onerror || $.noop,
+(function(window, location) {
+  var oldOnError    = window.onerror || function() {},
       URL           = location.protocol + '//hoptoadapp.com/notifier_api/v2/notices?data=',
       XML_TEMPLATE  = '<?xml version="1.0" encoding="UTF-8"?>'
                       + '<notice version="2.0">'
@@ -33,13 +33,8 @@
   }
   
   function notify(message, file, line) {
-    $("<iframe>", {
-      src:      URL + escape(generateXML(message, file, line))
-    }).css({
-      width:    "1px",
-      height:   "1px",
-      display:  "none"
-    }).appendTo("head");
+    var img = new Image();
+    img.src = URL + escape(generateXML(message, file, line));
   }
   
   function generateXML(message, file, line) {
@@ -54,10 +49,10 @@
     oldOnError.apply(this, args);
   };
   
-  $.hoptoad = {
+  window.Hoptoad = {
     setApiKey: function(apiKey) {
       XML_TEMPLATE = XML_TEMPLATE.replace("API_KEY", apiKey);
     },
     notify: notify
   };
-})(jQuery, window, location);
+})(window, location);
