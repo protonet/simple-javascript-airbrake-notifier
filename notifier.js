@@ -39,7 +39,7 @@
   
   function generateXML(message, file, line) {
     return XML_TEMPLATE.replace("EXCEPTION_MESSAGE",  message || 'Unknown error.')
-                       .replace("BACKTRACE_LINES",    '<line method="" file="' + escapeText(file) + '" number="' + escapeText(number) + '" />')
+                       .replace("BACKTRACE_LINES",    '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />')
                        .replace("PROJECT_ROOT",       location.protocol + '//' + location.host);
   }
   
