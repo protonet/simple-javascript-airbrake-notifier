@@ -1,5 +1,7 @@
 (function(window, location) {
-  var oldOnError    = window.onerror || function() {},
+  var root          = location.protocol + "//" + location.host,
+      apiKey        = window.AIRBRAKE_API_KEY,
+      oldOnError    = window.onerror || function() {},
       URL           = location.protocol + "//hoptoadapp.com/notifier_api/v2/notices?data=",
       XML_TEMPLATE  = '<?xml version="1.0" encoding="UTF-8"?>'
                       + '<notice version="2.0">'
@@ -36,22 +38,26 @@
   }
   
   function getXML(message, file, line) {
-    var apiKey = window.AIRBRAKE_API_KEY;
-    if (!apiKey) {
-      return;
-    }
-    file = file.replace(location.protocol + "//" + location.host, "[PROJECT ROOT]");
-    return XML_TEMPLATE.replace("#{API_KEY}",            apiKey)
-                       .replace("#{EXCEPTION_MESSAGE}",  message || "Unknown error.")
-                       .replace("#{REQUEST_URL}",        location.href)
-                       .replace("#{USER_AGENT}",         navigator.userAgent)
-                       .replace("#{REFERER}",            document.referrer)
-                       .replace("#{PROJECT_ROOT}",       location.protocol + "//" + location.host)
-                       .replace("#{BACKTRACE_LINES}",    '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />');
+    file = file.replace(root, "[PROJECT ROOT]");
+    var mapping = {
+      API_KEY:            apiKey,
+      EXCEPTION_MESSAGE:  message,
+      REQUEST_URL:        location.href,
+      USER_AGENT:         navigator.userAgent,
+      REFERER:            document.referrer,
+      PROJECT_ROOT:       root,
+      BACKTRACE_LINES:    '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />'
+    };
+    
+    return XML_TEMPLATE.replace(/#{(.+?)}/g, function(match, $1) {
+      return mapping[$1];
+    });
   }
   
   function notify(message, file, line) {
-    new Image().src = URL + escape(getXML(message, file, line));
+    if (apiKey) {
+      new Image().src = URL + escape(getXML(message, file, line));
+    }
   }
   
   window.onerror = function() {
@@ -63,4 +69,4 @@
   window.Airbrake = {
     notify: notify
   };
-})(window, location);
+})(this, location);
