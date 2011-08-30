@@ -1,9 +1,9 @@
 (function(window, location) {
   var oldOnError    = window.onerror || function() {},
-      URL           = location.protocol + '//hoptoadapp.com/notifier_api/v2/notices?data=',
+      URL           = location.protocol + "//hoptoadapp.com/notifier_api/v2/notices?data=",
       XML_TEMPLATE  = '<?xml version="1.0" encoding="UTF-8"?>'
                       + '<notice version="2.0">'
-                      +   '<api-key>API_KEY</api-key>'
+                      +   '<api-key>#{API_KEY}</api-key>'
                       +   '<notifier>'
                       +     '<name>hoptoad_notifier_js</name>'
                       +     '<version>0.1.0</version>'
@@ -11,36 +11,47 @@
                       +   '</notifier>'
                       +   '<error>'
                       +     '<class>Error</class>'
-                      +     '<message>EXCEPTION_MESSAGE</message>'
-                      +     '<backtrace>BACKTRACE_LINES</backtrace>'
+                      +     '<message>#{EXCEPTION_MESSAGE}</message>'
+                      +     '<backtrace>#{BACKTRACE_LINES}</backtrace>'
                       +   '</error>'
-                      // TODO: Following might not be needed!
-                      // +   '<request>'
-                      // +     '<url>REQUEST_URL</url>'
-                      // +     '<component>REQUEST_COMPONENT</component>'
-                      // +     '<action>REQUEST_ACTION</action>'
-                      // +   '</request>'
+                      +   '<request>'
+                      +     '<component>frontend</component>'
+                      +     '<action>javascript</action>'
+                      +     '<url>#{REQUEST_URL}</url>'
+                      +     '<cgi-data>'
+                      +       '<var key="HTTP_USER_AGENT">#{USER_AGENT}</var>'
+                      +       '<var key="HTTP_REFERER">#{REFERER}</var>'
+                      +     '</cgi-data>'
+                      +   '</request>'
                       +   '<server-environment>'
-                      +     '<project-root>PROJECT_ROOT</project-root>'
+                      +     '<project-root>#{PROJECT_ROOT}</project-root>'
                       +     '<environment-name>production</environment-name>'
                       +   '</server-environment>'
                       + '</notice>';
   
   function escapeText(text) {
-    return text.replace(/[&,<,>,',"]/g, function(match) {
+    return (text + "").replace(/[&,<,>,',"]/g, function(match) {
       return "&#" + match.charCodeAt(0) + ";";
     });
   }
   
-  function notify(message, file, line) {
-    var img = new Image();
-    img.src = URL + escape(generateXML(message, file, line));
+  function getXML(message, file, line) {
+    var apiKey = window.AIRBRAKE_API_KEY;
+    if (!apiKey) {
+      return;
+    }
+    file = file.replace(location.protocol + "//" + location.host, "[PROJECT ROOT]");
+    return XML_TEMPLATE.replace("#{API_KEY}",            apiKey)
+                       .replace("#{EXCEPTION_MESSAGE}",  message || "Unknown error.")
+                       .replace("#{REQUEST_URL}",        location.href)
+                       .replace("#{USER_AGENT}",         navigator.userAgent)
+                       .replace("#{REFERER}",            document.referrer)
+                       .replace("#{PROJECT_ROOT}",       location.protocol + "//" + location.host)
+                       .replace("#{BACKTRACE_LINES}",    '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />');
   }
   
-  function generateXML(message, file, line) {
-    return XML_TEMPLATE.replace("EXCEPTION_MESSAGE",  message || 'Unknown error.')
-                       .replace("BACKTRACE_LINES",    '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />')
-                       .replace("PROJECT_ROOT",       location.protocol + '//' + location.host);
+  function notify(message, file, line) {
+    new Image().src = URL + escape(getXML(message, file, line));
   }
   
   window.onerror = function() {
@@ -49,10 +60,7 @@
     oldOnError.apply(this, args);
   };
   
-  window.Hoptoad = {
-    setApiKey: function(apiKey) {
-      XML_TEMPLATE = XML_TEMPLATE.replace("API_KEY", apiKey);
-    },
+  window.Airbrake = {
     notify: notify
   };
 })(window, location);
