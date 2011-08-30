@@ -1,0 +1,34 @@
+h1. Exception Notifier For Hoptoad / Airbrake 
+
+A lightweight and simple-to-use notifier for "Hoptoad / Airbrake":http://airbrakeapp.com
+* Includes basic error information (error message, line number, file, user agent, referrer)
+* Optimized file size for optimal performance (1021 bytes or 633 bytes gzipped)
+* Library agnostic
+* Works in all browsers that support the onerror event (IE 6+, Firefox, Safari, Chrome)
+
+h2. How To Use
+
+Include the following above all your other javascript:
+<pre><code><script>var AIRBRAKE_API_KEY = 'xxxxxxxxxx';</script>
+<script src="path/to/notifier.min.js"></script></code></pre>
+
+You probably also want to make sure that errors are only send to Airbrake when your site runs in production mode:
+<pre><code><%- if Rails.env.production? %>
+<script>var AIRBRAKE_API_KEY = 'xxxxxxxxxx';</script>
+<script src="path/to/notifier.min.js"></script>
+<%- end %></code></pre>
+
+Now every uncatched exception in your javascript code will be sent to your Airbrake account.
+
+You can also catch errors and send them to Airbrake by yourself:
+<pre><code>try {
+  doSomething();
+} catch(e) {
+  window.Airbrake && Airbrake.notify(e.message, e.fileName, e.lineNumber);
+}</code></pre>
+
+h2. Why Should I Use This Rather Than The Built-In Hoptoad JavaScript Notifier?
+
+Well, you don't have to.
+I decided to write my own javascript notifier since the standard hoptoad notifier feels very clumsy (7.75KB or 3.08KB gzipped) and is packed with features I don't need.
+However, if you need extended error information (including a proper stack trace etc.) you should rather use the hoptoad code.
