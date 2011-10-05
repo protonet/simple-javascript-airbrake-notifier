@@ -46,7 +46,7 @@
   
   window.onerror = (window.Airbrake = {}).notify = function(message, file, line) {
     if (apiKey) {
-      new Image().src = "http://hoptoadapp.com/notifier_api/v2/notices?data=" + escape(getXML(message, file, line));
+      new Image().src = "https://airbrakeapp.com/notifier_api/v2/notices?data=" + escape(getXML(message, file, line));
     }
   };
 })(this, location);
