@@ -32,7 +32,7 @@
                 xmlNode("component",  undef, "frontend")    +
                 xmlNode("action",     undef, "javascript")  +
                 xmlNode("url",        undef, location.href) +
-                xmlNode("cgi-data",   undef, 
+                xmlNode("cgi-data",   undef,
                   xmlNode("var", 'key="HTTP_USER_AGENT"', navigator.userAgent) +
                   xmlNode("var", 'key="HTTP_REFERER"',    document.referrer)
                 )
@@ -46,7 +46,7 @@
   
   window.onerror = (window.Airbrake = {}).notify = function(message, file, line) {
     if (apiKey) {
-      new Image().src = "https://airbrakeapp.com/notifier_api/v2/notices?data=" + escape(getXML(message, file, line));
+      new Image().src = "http://airbrakeapp.com/notifier_api/v2/notices?data=" + escape(getXML(message, file, line));
     }
   };
 })(this, location);
