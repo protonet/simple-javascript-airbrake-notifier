@@ -1,6 +1,7 @@
 (function(window, location, undef) {
   var root   = location.protocol + "//" + location.host,
       apiKey = window.AIRBRAKE_API_KEY;
+      env    = window.AIRBRAKE_ENVIRONMENT || "production";
   
   function xmlNode(nodeName, attributes, nodeValue) {
     attributes = attributes ? " " + attributes : "";
@@ -39,7 +40,7 @@
               ) +
               xmlNode("server-environment", undef,
                 xmlNode("project-root",     undef, root) +
-                xmlNode("environment-name", undef, "production")
+                xmlNode("environment-name", undef, env)
               )
             );
   }
