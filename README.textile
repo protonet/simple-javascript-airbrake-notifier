@@ -19,8 +19,7 @@ You probably also want to make sure that errors are only send to Airbrake when y
 <%- end %></code></pre>
 
 Or pass the current environment like:
-<pre><code>
-<script>
+<pre><code><script>
   var AIRBRAKE_API_KEY = 'xxxxxxxxxxx';
   var AIRBRAKE_ENVIRONMENT = 'staging';
 </script>
