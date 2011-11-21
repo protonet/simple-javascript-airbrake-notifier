@@ -1,4 +1,4 @@
-h1. Exception Notifier For Hoptoad / Airbrake 
+h1. Exception Notifier For Hoptoad / Airbrake
 
 A lightweight and simple-to-use notifier for "Hoptoad / Airbrake":http://airbrakeapp.com
 * Includes basic error information (error message, line number, file, user agent, referrer)
@@ -17,6 +17,14 @@ You probably also want to make sure that errors are only send to Airbrake when y
 <script>var AIRBRAKE_API_KEY = 'xxxxxxxxxx';</script>
 <script src="path/to/notifier.min.js"></script>
 <%- end %></code></pre>
+
+Or pass the current environment like:
+<pre><code><script>
+  var AIRBRAKE_API_KEY = 'xxxxxxxxxxx';
+  var AIRBRAKE_ENVIRONMENT = 'staging';
+</script>
+<script src="path/to/notifier.min.js"></script>
+</code></pre>
 
 Now every uncatched exception in your javascript code will be sent to your Airbrake account.
 
