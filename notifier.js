@@ -15,7 +15,7 @@
   }
   
   function getXML(message, file, line) {
-    file = file.replace(root, "[PROJECT ROOT]");
+    file && (file = file.replace(root, "[PROJECT ROOT]"));
     return '<?xml version="1.0" encoding="UTF-8"?>' +
             xmlNode("notice", 'version="2.0"',
               xmlNode("api-key",  undef, apiKey) +
@@ -27,7 +27,7 @@
               xmlNode("error",    undef, 
                 xmlNode("class",      undef, "Error")    +
                 xmlNode("message",    undef, escapeText(message))    +
-                xmlNode("backtrace",  undef, '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />')
+                file && line && xmlNode("backtrace",  undef, '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />')
               ) +
               xmlNode("request",  undef,
                 xmlNode("component",  undef, "frontend")    +
