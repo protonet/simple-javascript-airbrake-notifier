@@ -46,7 +46,6 @@
   }
 
   window.onerror = (window.Airbrake = {}).notify = function(message, file, line) {
-    log(apiKey);
     if (apiKey) {
       new Image().src = "http://airbrake.io/notifier_api/v2/notices?data=" + encodeURIComponent(getXML(message, file, line));
     }
