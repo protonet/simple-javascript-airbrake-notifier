@@ -27,7 +27,7 @@
               xmlNode("error",    undef,
                 xmlNode("class",      undef, "Error")    +
                 xmlNode("message",    undef, escapeText(message))    +
-                file && line && xmlNode("backtrace",  undef, '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />')
+                (file && line && xmlNode("backtrace",  undef, '<line method="" file="' + escapeText(file) + '" number="' + escapeText(line) + '" />'))
               ) +
               xmlNode("request",  undef,
                 xmlNode("component",  undef, "frontend")    +
